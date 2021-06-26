@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello BooksController!{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h2>Book - {{ books.title }}</h2>
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div>Title {{ books.title }}</div>
+                <br>
+{#                <div>Author {{ books.author }}</div>#}
+{#                <br>#}
+                <div>Description {{ books.description }}</div>
+                <br>
+                <div>Year {{ books.year|date('Y') }}</div>
+                <div class="text-muted bg-secondary"><a href="{{ path('update_book', {'books': books.id}) }}">Update</a></div>
+                <div class="text-muted bg-secondary"><a href="{{ path('delete_book', {'books': books.id}) }}">Delete</a></div>
+            </div>
+        </div>
+
+        <h2>Authors</h2>
+        {% for author in books.authors %}
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div>Author: {{ author.name }}</div>
+                    <div class="text-muted bg-secondary"><a href="{{ path('update_authors', {'books': books.id, 'authors': author.id}) }}">Update</a></div>
+                    <div class="text-muted bg-secondary"><a href="{{ path('delete_authors', {'books': books.id, 'authors': author.id}) }}">Delete</a></div>
+                </div>
+            </div>
+        {% endfor %}
+        {{ render(controller('App\\Controller\\AuthorsController::create', {'books': books.id})) }}
+    </div>
+{% endblock %}

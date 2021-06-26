@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\AuthorsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\Collection;
+
 
 /**
  * @ORM\Entity(repositoryClass=AuthorsRepository::class)
@@ -22,10 +25,17 @@ class Authors
      */
     private $name;
 
+
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToMany(targetEntity="App\Entity\Books", inversedBy="authors")
      */
-    private $book;
+    private $books;
+
+
+    public function __construct()
+    {
+        $this->books = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -44,15 +54,38 @@ class Authors
         return $this;
     }
 
-    public function getBook(): ?string
+    public function getBook(): ArrayCollection
     {
-        return $this->book;
+        return $this->books;
     }
 
-    public function setBook(string $book): self
+//    /**
+//     * @return Collection|Books[]
+//     */
+//    public function getBooks(): Collection
+//    {
+//        return $this->books;
+//    }
+
+    public function addBook(Books $book): self
     {
-        $this->book = $book;
+        if (!$this->books->contains($book)) {
+            $this->books[] = $book;
+        }
 
         return $this;
     }
+
+    public function removeBook(Books $book): self
+    {
+        if ($this->books->contains($book)) {
+            $this->books->removeElement($book);
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    { return $this->name; }
+
 }

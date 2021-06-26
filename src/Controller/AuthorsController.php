@@ -2,19 +2,91 @@
 
 namespace App\Controller;
 
+use App\Entity\Authors;
+use App\Entity\Books;
+use App\Form\AuthorsType;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AuthorsController extends AbstractController
 {
     /**
-     * @Route("/authors", name="authors")
+     * @Route("/authors/create/{books}", name="create_authors")
      */
-    public function index(): Response
+    public function create(Request $request, Books $books): Response
     {
-        return $this->render('authors/index.html.twig', [
-            'controller_name' => 'AuthorsController',
+        $authors = new Authors();
+        $form = $this->createForm(AuthorsType::class, $authors, [
+           'action' => $this->generateUrl('create_authors', [
+               'books' => $books->getID()
+           ]),
+           'method' => 'POST'
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $authors = $form->getData();
+            $authors->addBook($books);
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($authors);
+            $em->flush();
+
+            return $this->redirectToRoute('singleView_books', ['books' => $books->getId()]);
+        }
+
+        return $this->render('authors/form.html.twig', [
+            'form' => $form->createView(),
+            'books' => $books
         ]);
     }
+
+    /**
+     * @Route("/authors/update/{books}/{authors}", name="update_authors")
+     */
+    public function update(Request $request, Books $books, Authors $authors)
+    {
+
+        $form = $this->createForm(AuthorsType::class, $authors, [
+            'action' => $this->generateUrl('update_authors', [
+                'books' => $books->getID(),
+                'authors' => $authors->getId()
+            ]),
+            'method' => 'POST'
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $em->flush();
+
+            return $this->redirectToRoute('singleView_books', ['books' => $books->getId()]);
+        }
+
+        return $this->render('authors/form.html.twig', [
+            'form' => $form->createView(),
+            'books' => $books
+        ]);
+    }
+
+    /**
+     * @Route("/authors/delete/{books}/{authors}", name="delete_authors")
+     */
+    public function delete(Books $books, Authors $authors): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($authors);
+        $em->flush();
+
+
+        return $this->redirectToRoute('singleView_books', ['books' => $books->getId()]);
+    }
+
+
 }

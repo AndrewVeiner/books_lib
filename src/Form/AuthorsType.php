@@ -13,7 +13,7 @@ class AuthorsType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('book')
+//            ->add('books')
         ;
     }
 

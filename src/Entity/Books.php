@@ -3,10 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\BooksRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
+use Doctrine\Common\Collections\Collection;
 
 /**
- * @ORM\Entity(repositoryClass=BooksRepository::class)
+ * @ORM\Entity
  */
 class Books
 {
@@ -22,10 +25,10 @@ class Books
      */
     private $title;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $author;
+//    /**
+//     * @ORM\Column(type="string", length=255)
+//     */
+//    private $author;
 
     /**
      * @ORM\Column(type="text")
@@ -33,7 +36,7 @@ class Books
     private $description;
 
     /**
-     * @ORM\Column(type="blob")
+     * @ORM\Column(type="text")
      */
     private $cover;
 
@@ -41,6 +44,21 @@ class Books
      * @ORM\Column(type="date")
      */
     private $year;
+
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Authors", mappedBy="books", cascade={"persist", "remove"})
+     * @OrderBy({"id" = "DESC"})
+     */
+    private $authors;
+
+    /**
+     * Books constructor
+     */
+    public function __construct()
+    {
+        $this->authors = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -59,17 +77,17 @@ class Books
         return $this;
     }
 
-    public function getAuthor(): ?string
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(string $author): self
-    {
-        $this->author = $author;
-
-        return $this;
-    }
+//    public function getAuthor(): ?string
+//    {
+//        return $this->authors;
+//    }
+//
+//    public function setAuthor(string $authors): self
+//    {
+//        $this->authors = $authors;
+//
+//        return $this;
+//    }
 
     public function getDescription(): ?string
     {
@@ -106,4 +124,39 @@ class Books
 
         return $this;
     }
+
+    /**
+     * Add author
+     *
+     *
+     * @return Books
+     */
+    public function addAuthor(Authors $authors)
+    {
+        $this->authors[] = $authors;
+        return $this;
+    }
+
+    /**
+     * Remove author
+     *
+     * @param \App\Entity\Authors $authors
+     */
+    public function removeAuthor(Authors $authors)
+    {
+        $this->authors->removeElement($authors);
+    }
+
+    /**
+     * Get author
+     *
+     * @return  \Doctrine\Common\Collections\Collection
+     */
+    public function GetAuthors(): \Doctrine\Common\Collections\Collection
+    {
+        return $this->authors;
+    }
+
+    public function __toString()
+    { return $this->authors->name; }
 }

@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello BooksController!{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h2>Book</h2>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            {{ form_start(form) }}
+                {{ form_start(form) }}
+                <div class="form-group">
+                    <label for="textarea">{{ form_label(form.title) }}</label><br>
+                    {{ form_widget(form.title) }}
+                </div>
+                <div class="form-group">
+                    <label for="textarea">{{ form_label(form.description) }}</label><br>
+                    {{ form_widget(form.description) }}
+                </div>
+                <div class="form-group">
+                    <label for="textarea">{{ form_label(form.year) }}</label><br>
+                    {{ form_widget(form.year) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="textarea">{{ form_label(form.cover) }}</label><br>
+                    {{ form_widget(form.cover) }}
+                </div>
+
+            <ul class="tags">
+                {% for author in form.authors %}
+                    <li>{{ author.name }}</li>
+                {% endfor %}
+
+            </ul>
+
+            <ul class="authors" data-prototype="{{ form_widget(form.authors.vars.prototype)|e('html_attr') }}"></ul>
+
+
+            <button type="submit">Save</button>
+            {{ form_end(form) }}
+
+
+
+        </div>
+    </div>
+    <script>
+        var $addAuthorsLink = $('<a href="#" class="add_authors_link">Add a authors</a>');
+        var $newLinkLi = $('<li></li>').append($addAuthorsLink);
+
+        jQuery(document).ready(function() {
+            var $collectionHolder = $('ul.authors');
+            $collectionHolder.append($newLinkLi);
+            $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+            $addAuthorsLink.on('click', function(e) {
+                e.preventDefault();
+                addAuthorsForm($collectionHolder, $newLinkLi);
+            });
+        });
+
+        function addAuthorsForm($collectionHolder, $newLinkLi) {
+            var prototype = $collectionHolder.data('prototype');
+            var index = $collectionHolder.data('index');
+            var newForm = prototype.replace(/__name__/g, index);
+            $collectionHolder.data('index', index + 1);
+            var $newFormLi = $('<li></li>').append(newForm);
+            $newFormLi.append('<a href="#" class="remove-authors">x</a>');
+            $newLinkLi.before($newFormLi);
+            $('.remove-authors').click(function(e) {
+                e.preventDefault();
+                $(this).parent().remove();
+                return false;
+            });
+        }
+    </script>
+{% endblock %}
