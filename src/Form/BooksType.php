@@ -22,9 +22,9 @@ class BooksType extends AbstractType
         $builder
             ->add('title', TextType::class, ['label' => 'Название книги'])
             ->add('description', TextType::class, ['label' => 'Описание книги'])
-            ->add('cover', FileType::class, [
-                'mapped' => false,
-                'label' => 'upload cover'
+            ->add('cover', null, [
+                'label' => 'upload cover',
+                'data_class' => null,
             ])
             ->add('year', DateType::class, [
                 'label' => 'Год публикации книги',
@@ -48,6 +48,12 @@ class BooksType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Books::class,
+            'require_cover' => false,
         ]);
+
+        $resolver->setAllowedTypes('require_cover', 'bool');
+//        $resolver->setDefaults([
+//            'data_class' => Books::class,
+//        ]);
     }
 }

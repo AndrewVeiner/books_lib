@@ -36,7 +36,7 @@ class AuthorsController extends AbstractController
             $em->persist($authors);
             $em->flush();
 
-            return $this->redirectToRoute('singleView_books', ['books' => $books->getId()]);
+            return $this->redirectToRoute('singleView_books', ['id' => $books->getId()]);
         }
 
         return $this->render('authors/form.html.twig', [
@@ -46,7 +46,7 @@ class AuthorsController extends AbstractController
     }
 
     /**
-     * @Route("/authors/update/{books}/{authors}", name="update_authors")
+     * @Route("/authors/update/{books}/{authors}", name="update_authors", methods={"GET", "POST"})
      */
     public function update(Request $request, Books $books, Authors $authors)
     {
@@ -61,13 +61,14 @@ class AuthorsController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+
             $em = $this->getDoctrine()->getManager();
 
             $em->flush();
 
-            return $this->redirectToRoute('singleView_books', ['books' => $books->getId()]);
-        }
+//            return $this->redirectToRoute('singleView_books', ['id' => $books->getId()]);
+        return $this->redirectToRoute('books');
+
 
         return $this->render('authors/form.html.twig', [
             'form' => $form->createView(),

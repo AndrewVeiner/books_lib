@@ -2,6 +2,11 @@
 
 {% block title %}Hello BooksController!{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="/css/listBooks.css">
+{% endblock %}
+
 {% block body %}
     <div class="container">
         <h2>List of books</h2>
@@ -9,19 +14,56 @@
         {% for book in books %}
             <div class="card bg-dark text-white">
                 <div class="card-body">
-                    <img src="{{ asset('uploads/') ~ book.cover}}">
-                    <div>Title {{ book.title }}</div>
-                    <br>
-                    <div>Authors:</div>
+                    <form class="tr" action="/books/update_inline/{{ book.id }}" method="POST" enctype="multipart/form-data">
+                        <div class="td">
+                            <div>Название книги:</div>
+                            <textarea id="title-{{book.id}}" name="books[title]" type="text" class="form-control" required="required">{{ book.title }}</textarea>
+                            <label for="title-{{ book.id }}">{{ book.title }}</label>
+                        </div>
+                        <div class="td">
+                            <input id="cover-{{book.id}}" type="file" name="books[cover]" class="form-control">
+                            <label for="cover-{{ book.id }}">
+                                <img height="200px" src="{{ asset('uploads/' ~ book.cover) }}" />
+                            </label>
+                        </div>
+
+                    <div class="td">
+                        <div>Описание:</div>
+                        <textarea id="description-{{book.id}}" name="books[description]" type="text" class="form-control" required="required">{{ book.description }}</textarea>
+                        <label for="description-{{ book.id }}">{{ book.description }}</label>
+                    </div>
+                    <div class="td">
+                        <div>Год издательства:</div>
+                        <textarea id="year-{{book.id}}" name="books[year]" type="text" class="form-control" required="required">{{ book.year|date('Y') }}</textarea>
+                        <label for="year-{{ book.id }}">{{ book.year|date('Y') }}</label>
+                    </div>
+
+                </form>
+                    {% if book.authors|length == 0 %}
+                        <div>Автор не известен.</div>
+                    {% elseif book.authors|length == 1 %}
+                        <div>Автор:</div>
+                    {% else %}
+                        <div>Авторы:</div>
+                    {% endif %}
+
                     {% for author in book.authors %}
-                        <div>{{ author.name }}</div>
+                    <form class="aut" action="/authors/update/{{ book.id }}/{{ author.id }}" method="POST" enctype="multipart/form-data">
+                        <div class="td">
+                            <textarea id="author-{{author.id}}" name="authors[name]" type="text" class="form-control" required="required">{{ author.name }}</textarea>
+                            <label for="author-{{ author.id }}">{{ author.name }}</label>
+                        </div>
+                    </form>
                     {% endfor %}
-                    <div>Description {{ book.description }}</div>
-                    <br>
-                    <div>Year {{ book.year|date('Y') }}</div>
-                    <div class="text-muted bg-secondary"><a href="{{ path('singleView_books', {'books': book.id}) }}">Watch</a></div>
+                    <div class="text-muted bg-secondary"><a href="{{ path('singleView_books', {'id': book.id}) }}">Просмотр</a></div>
                 </div>
             </div>
+
         {% endfor %}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="/js/inlineEdit.js" defer="defer"></script>
 {% endblock %}
