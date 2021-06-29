@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BooksController!{% endblock %}
+{% block title %}Список книг{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -9,8 +9,9 @@
 
 {% block body %}
     <div class="container">
-        <h2>List of books</h2>
-        <a href="{{ path('create_books') }}">Creat books</a>
+        <h2>Список книг</h2>
+        <div><a class="btn btn-sm btn-success" role="button" href="{{ path('create_books') }}">Добавить новую книгу</a></div>
+        <br>
         {% for book in books %}
             <div class="card bg-dark text-white">
                 <div class="card-body">
@@ -58,7 +59,7 @@
                     <a class="btn btn-sm btn-secondary" role="button" href="{{ path('singleView_books', {'id': book.id}) }}">Просмотр</a>
                 </div>
             </div>
-
+            <br>
         {% endfor %}
     </div>
 {% endblock %}
