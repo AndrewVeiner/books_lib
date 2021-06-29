@@ -43,7 +43,7 @@ class Books
     private $cover;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="integer")
      */
     private $year;
 
@@ -115,12 +115,12 @@ class Books
         return $this;
     }
 
-    public function getYear(): ?\DateTimeInterface
+    public function getYear()
     {
         return $this->year;
     }
 
-    public function setYear(\DateTimeInterface $year): self
+    public function setYear($year): self
     {
         $this->year = $year;
 

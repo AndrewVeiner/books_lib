@@ -10,6 +10,27 @@
 {% block body %}
     <div class="container">
         <h2>Список книг</h2>
+
+        <form class="tr table-head" method="GET">
+            <div class="th"></div>
+            <div class="th">
+                <input name="title" type="text" class="filter" value="{{ filters.title | default("") }}" placeholder="Фильтр по названию">
+            </div>
+            <div class="th">
+                <input name="description" type="text" class="filter" value="{{ filters.description | default("") }}" placeholder="Фильтр по описанию">
+            </div>
+            <div class="th">
+                <input name="year" type="number" class="filter" value="{{ filters.year | default("") }}" placeholder="Фильтр по году издания">
+            </div>
+            <div class="th"></div>
+            <br>
+            <div class="th">
+                <input class="btn btn-sm btn-primary" type="submit" value="Применить филтры" />
+                <a class="btn btn-sm btn-secondary" role="button" href="{{ path('books') }}">Сбросить фильтры</a>
+            </div>
+
+        </form>
+        <br>
         <div><a class="btn btn-sm btn-success" role="button" href="{{ path('create_books') }}">Добавить новую книгу</a></div>
         <br>
         {% for book in books %}
@@ -35,8 +56,8 @@
                     </div>
                     <div class="td">
                         <div>Год издательства:</div>
-                        <textarea id="year-{{book.id}}" name="books[year]" type="text" class="form-control" required="required">{{ book.year|date('Y') }}</textarea>
-                        <label for="year-{{ book.id }}">{{ book.year|date('Y') }}</label>
+                        <textarea id="year-{{book.id}}" name="books[year]" type="text" class="form-control" required="required">{{ book.year }}</textarea>
+                        <label for="year-{{ book.id }}">{{ book.year }}</label>
                     </div>
 
                 </form>

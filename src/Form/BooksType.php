@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,10 +27,8 @@ class BooksType extends AbstractType
                 'label' => 'upload cover',
                 'data_class' => null,
             ])
-            ->add('year', DateType::class, [
+            ->add('year', NumberType::class, [
                 'label' => 'Год публикации книги',
-                'widget' => 'single_text',
-                'format' => 'yyyy'
             ]);
 
 

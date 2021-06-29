@@ -14,7 +14,7 @@
                 <br>
                 <div>Описание: {{ books.description }}</div>
                 <br>
-                <div>Год издательства: {{ books.year|date('Y') }}</div>
+                <div>Год издательства: {{ books.year }}</div>
                 <a class="btn btn-sm btn-info" role="button" href="{{ path('update_book', {'books': books.id}) }}">Редактировать запись</a>
                 <a class="btn btn-sm btn-danger" role="button" href="{{ path('delete_book', {'books': books.id}) }}">Удалить запись</a>
             </div>

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Authors;
 use App\Entity\Books;
 use App\Form\BooksType;
+use App\Repository\BooksRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,14 +17,20 @@ class BooksController extends AbstractController
     /**
      * @Route("/", name="books")
      */
-    public function index(): Response
-    {   $em = $this->getDoctrine()->getManager();
+    public function index(BooksRepository $booksRepository, Request $request): Response
+    {
 
-        $books = $em->getRepository(Books::class)->findAll();
+        $repository = $this->getDoctrine()->getRepository(Books::class);
 
+        $filters = array_filter($request->query->all(), function($field) {
+            return boolval($field);
+        });
+
+        $em = $this->getDoctrine()->getManager();
         return $this->render('books/index.html.twig', [
             'controller_name' => 'BooksController',
-            'books' => $books
+            'books' => $repository->findBy($filters),
+            'filters' => $request->query->all(),
         ]);
     }
 
