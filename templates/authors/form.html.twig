@@ -4,14 +4,16 @@
 
 {% block body %}
     <div class="container">
-        <h2>Add authors</h2>
-        <div class="card bg-warning text-white">
+        <h2>Добавить автора</h2>
+        <div class="card bg-dark text-white">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 {{ form_start(form) }}
                 <div class="form-group">
-                    <label for="textarea">{{ form_label(form.name) }}</label>
+                    <label for="textarea">Автор</label>
                 </div>
-                <button type="submit">Tip_SAve</button>
+                <label for="textarea">ФИО</label><br>
+                {{ form_widget(form.name) }}
+                <button class="btn btn-sm btn-secondary" type="submit">Добавить</button>
                 {{ form_end(form) }}
             </div>
         </div>

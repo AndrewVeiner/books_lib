@@ -1,31 +1,32 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BooksController!{% endblock %}
+{% block title %}Просмотр{% endblock %}
 
 {% block body %}
     <div class="container">
         <h2>Book - {{ books.title }}</h2>
-        <div class="card bg-success text-white">
+        <div class="card bg-dark text-white">
             <div class="card-body">
-                <div>Title {{ books.title }}</div>
+                <div><a class="btn btn-sm btn-secondary" role="button" href="{{ path('books') }}">На главную</a></div>
                 <br>
-{#                <div>Author {{ books.author }}</div>#}
-{#                <br>#}
-                <div>Description {{ books.description }}</div>
+                <img height="400px" src="{{ asset('uploads/') ~ books.cover}}">
+                <div>Название книги: {{ books.title }}</div>
                 <br>
-                <div>Year {{ books.year|date('Y') }}</div>
-                <div class="text-muted bg-secondary"><a href="{{ path('update_book', {'books': books.id}) }}">Update</a></div>
-                <div class="text-muted bg-secondary"><a href="{{ path('delete_book', {'books': books.id}) }}">Delete</a></div>
+                <div>Описание: {{ books.description }}</div>
+                <br>
+                <div>Год издательства: {{ books.year|date('Y') }}</div>
+                <a class="btn btn-sm btn-info" role="button" href="{{ path('update_book', {'books': books.id}) }}">Редактировать запись</a>
+                <a class="btn btn-sm btn-danger" role="button" href="{{ path('delete_book', {'books': books.id}) }}">Удалить запись</a>
             </div>
         </div>
 
-        <h2>Authors</h2>
+        <h2>Авторы:</h2>
         {% for author in books.authors %}
-            <div class="card bg-success text-white">
+            <div class="card bg-dark text-white">
                 <div class="card-body">
-                    <div>Author: {{ author.name }}</div>
-                    <div class="text-muted bg-secondary"><a href="{{ path('update_authors', {'books': books.id, 'authors': author.id}) }}">Update</a></div>
-                    <div class="text-muted bg-secondary"><a href="{{ path('delete_authors', {'books': books.id, 'authors': author.id}) }}">Delete</a></div>
+                    <div>Автор: {{ author.name }}</div>
+                    <a class="btn btn-sm btn-info" role="button" href="{{ path('update_authors', {'books': books.id, 'authors': author.id}) }}">Изменить автора</a>
+                    <a class="btn btn-sm btn-danger" role="button" href="{{ path('delete_authors', {'books': books.id, 'authors': author.id}) }}">Удалить автора</a>
                 </div>
             </div>
         {% endfor %}

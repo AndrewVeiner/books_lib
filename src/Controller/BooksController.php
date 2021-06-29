@@ -28,7 +28,7 @@ class BooksController extends AbstractController
     }
 
     /**
-     * @Route("/books/singleView/{id}", name="singleView_books", methods={"GET","POST"})
+     * @Route("/books/singleView/{id}", name="singleView_books", methods={"GET","POST"}, requirements={"id":"\d+"})
      */
     public function singleView(Books $books)
     {
@@ -120,7 +120,7 @@ class BooksController extends AbstractController
     }
 
     /**
-     * @Route("/books/update_inline/{books}", name="update_book", methods={"POST"})
+     * @Route("/books/update_inline/{books}", name="update_inline_book", methods={"POST"})
      */
     public function update_inline(Request $request, Books $books)
     {

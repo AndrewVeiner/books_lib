@@ -60,14 +60,11 @@ class AuthorsController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-
-
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-
             $em->flush();
-
-//            return $this->redirectToRoute('singleView_books', ['id' => $books->getId()]);
-        return $this->redirectToRoute('books');
+            return $this->redirectToRoute('books');
+        }
 
 
         return $this->render('authors/form.html.twig', [
@@ -75,6 +72,29 @@ class AuthorsController extends AbstractController
             'books' => $books
         ]);
     }
+
+
+    /**
+     * @Route("/authors/update_inline/{books}/{authors}", name="update_inline_authors", methods={"GET", "POST"})
+     */
+    public function update_inline(Request $request, Books $books, Authors $authors)
+    {
+
+        $form = $this->createForm(AuthorsType::class, $authors, [
+            'action' => $this->generateUrl('update_authors', [
+                'books' => $books->getID(),
+                'authors' => $authors->getId()
+            ]),
+            'method' => 'POST'
+        ]);
+
+        $form->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+        $em->flush();
+        return $this->redirectToRoute('books');
+
+    }
+
 
     /**
      * @Route("/authors/delete/{books}/{authors}", name="delete_authors")
@@ -86,7 +106,7 @@ class AuthorsController extends AbstractController
         $em->flush();
 
 
-        return $this->redirectToRoute('singleView_books', ['books' => $books->getId()]);
+        return $this->redirectToRoute('singleView_books', ['id' => $books->getId()]);
     }
 
 

@@ -48,14 +48,14 @@
                     {% endif %}
 
                     {% for author in book.authors %}
-                    <form class="aut" action="/authors/update/{{ book.id }}/{{ author.id }}" method="POST" enctype="multipart/form-data">
+                    <form class="aut" action="/authors/update_inline/{{ book.id }}/{{ author.id }}" method="POST" enctype="multipart/form-data">
                         <div class="td">
                             <textarea id="author-{{author.id}}" name="authors[name]" type="text" class="form-control" required="required">{{ author.name }}</textarea>
                             <label for="author-{{ author.id }}">{{ author.name }}</label>
                         </div>
                     </form>
                     {% endfor %}
-                    <div class="text-muted bg-secondary"><a href="{{ path('singleView_books', {'id': book.id}) }}">Просмотр</a></div>
+                    <a class="btn btn-sm btn-secondary" role="button" href="{{ path('singleView_books', {'id': book.id}) }}">Просмотр</a>
                 </div>
             </div>
 

@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BooksController!{% endblock %}
+{% block title %}Редактирование{% endblock %}
 
 {% block body %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <div class="container">
-        <h2>Book</h2>
+        <h2>Редактирование</h2>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                {{ form_start(form) }}
+            <a class="btn btn-sm btn-secondary" role="button" href="{{ path('books') }}">На главную</a>
+            {{ form_start(form) }}
                 <div class="form-group">
                     <label for="textarea">{{ form_label(form.title) }}</label><br>
                     {{ form_widget(form.title) }}
@@ -19,21 +20,19 @@
                 <div class="form-group">
                     <label for="textarea">{{ form_label(form.year) }}</label><br>
                     {{ form_widget(form.year) }}
+
+                    <div class="form-control-feedback">{{ form_errors(form.year) }}</div>
+
                 </div>
-
-{#                <div class="form-group">#}
-{#                    <img height="200px" src="{{ asset('uploads/') ~ form_label(form.cover)}}">#}
-{#                </div>#}
-
                 <ul class="author">
+                    <label for="textarea">Авторы</label><br>
                     {% for author in form.authors %}
-                        <li>{{ form_widget(author.name) }}</li>
+                        <li>Автор - {{ form_widget(author.name) }}</li>
                     {% endfor %}
 
                 </ul>
 
                 <ul class="authors" data-prototype="{{ form_widget(form.authors.vars.prototype)|e('html_attr') }}"></ul>
-
 
                 <button type="submit">Save</button>
                 {{ form_end(form) }}

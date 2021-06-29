@@ -1,4 +1,4 @@
-var $addAuthorsLink = $('<a href="#" class="add_authors_link">Add a authors</a>');
+var $addAuthorsLink = $('<a href="#" class="add_authors_link">Добавить еще одного автора</a>');
 var $newLinkLi = $('<li></li>').append($addAuthorsLink);
 
 jQuery(document).ready(function() {
