@@ -39,3 +39,7 @@ services:
         arguments: [ ~, App\Entity\Books, ~ ]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Books }
+
+    mailer:
+        alias: fos_user.mailer.noop
+        public: true
