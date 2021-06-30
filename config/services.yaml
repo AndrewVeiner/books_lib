@@ -30,3 +30,12 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Admin\AuthorsAdmin:
+        arguments: [ ~, App\Entity\Authors, ~ ]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Authors }
+    App\Admin\BooksAdmin:
+        arguments: [ ~, App\Entity\Books, ~ ]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Books }
