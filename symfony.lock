@@ -287,6 +287,9 @@
     "sonata-project/user-bundle": {
         "version": "4.11.1"
     },
+    "symfony/acl-bundle": {
+        "version": "v2.1.0"
+    },
     "symfony/asset": {
         "version": "v4.4.25"
     },
