@@ -1,20 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AuthorsController!{% endblock %}
+{% block title %}Список книг{% endblock %}
+
+
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="container">
+        <div>
+            <a class="btn btn-sm btn-warning" role="button" href="{{ path('books') }}">Список книг</a>
+            <a class="btn btn-sm btn-warning" role="button" href="{{ path('index_authors') }}">Список авторов</a>
+            <br><br>
+        </div>
+        <div><a class="btn btn-sm btn-success" role="button" href="{{ path('create_only_authors') }}">Добавить нового автора</a></div>
+        <br>
+        {% for author in authors %}
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <div class="td">
+                            <div>ФИО Автора:</div>
+                            <div style="margin-left: 50px;">{{ author.name }}</div>
+                    </div>
+                    <div>Работы автора: </div>
+                    {% for book in author.books %}
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+                        <div style="margin-left: 50px;">{{ book.title }}</div>
+                    {% endfor %}
+                </div>
+                <div>
+{#                    <a class="btn btn-sm btn-info" role="button" href="{{ path('update_authors', {'books': books.id, 'authors': author.id}) }}">Изменить автора</a>#}
+{#                    <a class="btn btn-sm btn-danger" role="button" href="{{ path('delete_authors', {'books': books.id, 'authors': author.id}) }}">Удалить автора</a>#}
+                    <a class="btn btn-sm btn-info" role="button" href="{{ path('update_authors_in_list', {'authors': author.id}) }}">Редактировать</a>
+                    <a class="btn btn-sm btn-danger" role="button" href="{{ path('delete_authors_in_list_authors', {'authors': author.id}) }}">Удалить</a>
+                </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/konetall/PhpstormProjects/lib_books/src/Controller/AuthorsController.php'|file_link(0) }}">src/Controller/AuthorsController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/konetall/PhpstormProjects/lib_books/templates/authors/index.html.twig'|file_link(0) }}">templates/authors/index.html.twig</a></code></li>
-    </ul>
-</div>
+{#                <div>Книги автора:</div>#}
+{#                {% for book in author.books %}#}
+{#                        <div class="td">#}
+{#                            <div for="book-{{ book.id }}">{{ book.title }}</div>#}
+{#                        </div>#}
+{#                {% endfor %}#}
+            </div>
+            <br>
+        {% endfor %}
+    </div>
 {% endblock %}
+

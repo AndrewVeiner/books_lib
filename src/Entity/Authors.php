@@ -54,7 +54,7 @@ class Authors
         return $this;
     }
 
-    public function getBook(): ArrayCollection
+    public function getBooks(): \Doctrine\Common\Collections\Collection
     {
         return $this->books;
     }
@@ -67,7 +67,7 @@ class Authors
 //        return $this->books;
 //    }
 
-    public function addBook(Books $book): self
+    public function addBooks(Books $book): self
     {
         if (!$this->books->contains($book)) {
             $this->books[] = $book;
@@ -76,7 +76,7 @@ class Authors
         return $this;
     }
 
-    public function removeBook(Books $book): self
+    public function removeBooks(Books $book): self
     {
         if ($this->books->contains($book)) {
             $this->books->removeElement($book);

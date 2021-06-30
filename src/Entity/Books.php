@@ -79,17 +79,6 @@ class Books
         return $this;
     }
 
-//    public function getAuthor(): ?string
-//    {
-//        return $this->authors;
-//    }
-//
-//    public function setAuthor(string $authors): self
-//    {
-//        $this->authors = $authors;
-//
-//        return $this;
-//    }
 
     public function getDescription(): ?string
     {

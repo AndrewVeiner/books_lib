@@ -7,7 +7,7 @@
     <div class="container">
         <h2>Редактирование</h2>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <a class="btn btn-sm btn-secondary" role="button" href="{{ path('books') }}">На главную</a>
+            <a class="btn btn-sm btn-warning" role="button" href="{{ path('books') }}">На главную</a>
             {{ form_start(form) }}
                 <div class="form-group">
                     <label for="textarea">{{ form_label(form.title) }}</label><br>
@@ -33,12 +33,12 @@
                 </ul>
 
                 <ul class="authors" data-prototype="{{ form_widget(form.authors.vars.prototype)|e('html_attr') }}"></ul>
-
+            <div class="form-group">
+                <label for="textarea">Загрузить обложку</label><br>
+                {{ form_widget(form.cover) }}
+            </div>
                 <button type="submit">Save</button>
                 {{ form_end(form) }}
-
-
-
         </div>
     </div>
 {% endblock %}

@@ -70,16 +70,31 @@ class BooksController extends AbstractController
             }
 
             $authors = $form->get('authors')->getData();
-            for ($i = 0; $i < count($authors); $i++) {
-                $book->addAuthor($authors[$i]);
-                $authors[$i]->addBook($book);
-            }
-            //$string_version = implode(',', $authors);
+            $AllAuthors = $this->getDoctrine()->getManager()->getRepository(Authors::class)->findAll();
 
-            $book = $form->getData();
+            for ($i = 0; $i < count($authors); $i++) {
+                if (in_array((string)$authors[$i], $AllAuthors)) {
+                    $key = array_search((string)$authors[$i], $AllAuthors);
+                    $book->addAuthor($AllAuthors[$key]);
+                    $AllAuthors[$key]->addBooks($book);
+                } else {
+                    $book->addAuthor($authors[$i]);
+                    $authors[$i]->addBooks($book);
+                }
+            }
+
+//            $book = $form->getData();
             $em = $this->getDoctrine()->getManager();
 
             $em->persist($book);
+            $em->flush();
+            $AllAuthors = $this->getDoctrine()->getManager()->getRepository(Authors::class)->findAll();
+            for ($i = 0; $i < count($AllAuthors); $i++) {
+                if (count($AllAuthors[$i]->getBooks()) == 0)
+                {
+                    $this->getDoctrine()->getManager()->remove($AllAuthors[$i]);
+                }
+            }
             $em->flush();
 
             return $this->redirectToRoute('books');
@@ -115,7 +130,29 @@ class BooksController extends AbstractController
             } else {
                 $books->setCover($oldFileNamePath);
             }
+
+            $authors = $form->get('authors')->getData();
+            $AllAuthors = $this->getDoctrine()->getManager()->getRepository(Authors::class)->findAll();
+
+            for ($i = 0; $i < count($authors); $i++) {
+                if (in_array((string)$authors[$i], $AllAuthors)) {
+                    $key = array_search((string)$authors[$i], $AllAuthors);
+                    $books->addAuthor($AllAuthors[$key]);
+                    $AllAuthors[$key]->addBooks($books);
+                } else {
+                    $books->addAuthor($authors[$i]);
+                    $authors[$i]->addBooks($books);
+                }
+            }
             $em->flush();
+//            $AllAuthors = $this->getDoctrine()->getManager()->getRepository(Authors::class)->findAll();
+//            for ($i = 0; $i < count($AllAuthors); $i++) {
+//                if (count($AllAuthors[$i]->getBooks()) == 0)
+//                {
+//                    $this->getDoctrine()->getManager()->remove($AllAuthors[$i]);
+//                }
+//            }
+//            $em->flush();
 
             return $this->redirectToRoute('books');
         }
@@ -165,9 +202,16 @@ class BooksController extends AbstractController
     public function delete(Books $books)
     {
         $em = $this->getDoctrine()->getManager();
+        $authors = $books->GetAuthors();
+        for ($i = 0; $i < count($authors); $i++) {
+            $authors[$i]->removeBooks($books);
+            if (count($authors[$i]->getBooks()) == 0)
+            {
+                $em->remove($authors[$i]);
+            }
+        }
         $em->remove($books);
         $em->flush();
-
         return $this->redirectToRoute('books');
     }
 

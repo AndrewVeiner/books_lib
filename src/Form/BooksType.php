@@ -33,7 +33,7 @@ class BooksType extends AbstractType
 
 
         $builder->add('authors', CollectionType::class, [
-            'label' => 'sdfsdf книги',
+            'label' => "Авторы",
             'entry_type' => AuthorsType::class,
             'entry_options' => ['label' => false],
             'allow_add' => true,
