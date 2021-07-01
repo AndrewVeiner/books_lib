@@ -145,14 +145,6 @@ class BooksController extends AbstractController
                 }
             }
             $em->flush();
-//            $AllAuthors = $this->getDoctrine()->getManager()->getRepository(Authors::class)->findAll();
-//            for ($i = 0; $i < count($AllAuthors); $i++) {
-//                if (count($AllAuthors[$i]->getBooks()) == 0)
-//                {
-//                    $this->getDoctrine()->getManager()->remove($AllAuthors[$i]);
-//                }
-//            }
-//            $em->flush();
 
             return $this->redirectToRoute('books');
         }
@@ -175,7 +167,7 @@ class BooksController extends AbstractController
         //$coverFile = $form->get('cover')->getData();
         $file = $form->get('cover')->getData();
         $em = $this->getDoctrine()->getManager();
-        \Doctrine\Common\Util\Debug::dump($file);
+//        \Doctrine\Common\Util\Debug::dump($file);
 
         if ($file != null) {
             $filename = md5(uniqid()) . '.' . $file->guessExtension();
@@ -211,6 +203,55 @@ class BooksController extends AbstractController
             }
         }
         $em->remove($books);
+        $em->flush();
+        return $this->redirectToRoute('books');
+    }
+
+
+
+
+    /**
+     * @Route("/generate_book", name="generate_book")
+     */
+    public function GenerateBook(): Response
+    {
+        $titles = array("451° по Фаренгейту", "Мастер и Маргарита", "Шантарам", "Три товарища", "Цветы для Элджернона", "Портрет Дориана Грея");
+        $authors_name = array('Рей Брэдбери', 'Джордж Оруэлл', 'Михаил Булгаков', 'Грегори Дэвид Робертс', 'Эрих Мария Ремарк', 'Дэниел Киз');
+        $descriptions = array('Мастер', 'мирового', 'масштаба', 'совмещающий', 'в', 'литературе',
+            'несовместимое.', 'Создатель', 'таких', 'ярчайших', 'шедевров', 'как', 'Марсианские',
+            'хроники', '451°', 'по', 'Фаренгейту', 'Вино', 'из', 'одуванчиков', 'и', 'так', 'далее',
+            'и', 'так', 'далее.', 'Лауреат', 'многочисленных', 'премий.', 'Это', 'Рэй', 'Брэдбери.',
+            'Его', 'увлекательные', 'истории', 'Один', 'из', 'самых', 'загадочных', 'и', 'удивительных',
+            'романов', 'XX', 'века.', 'Роман', 'Мастер', 'и', 'Маргарита', '-', 'визитная', 'карточка',
+            'Михаила', 'Афанасьевича', 'Булгакова.', 'Более', 'десяти', 'лет', 'Булгаков', 'работал', 'над',
+            'книгой', 'которая', 'стала', 'его', 'романом-судьбой', 'романом-завещанием.', 'В', 'Мастере', 'и',
+            'Маргарите', 'есть', 'все:', 'веселое', 'Трое', 'друзей', '-', 'Робби', 'отчаянный', 'автогонщик',
+            'Кестер', 'и', 'последний', 'романтик', 'Ленц', 'прошли', 'Первую', 'мировую', 'войну.', 'Вернувшись',
+            'в', 'гражданскую', 'жизнь', 'они', 'основали', 'небольшую', 'автомастерскую.', 'И', 'хотя', 'призраки',
+            'прошлого', 'преследуют', 'их', 'они', 'не', 'унывают', '-', 'ведь', 'что', 'может', 'быть', 'лучше',
+            'дружбы', 'крепкой', 'и');
+        $book = new Books();
+        $book->setCover('default.png');
+        \Doctrine\Common\Util\Debug::dump(array_rand($titles, 1));
+        $book->setTitle($titles[array_rand($titles, 1)]);
+        $book->setYear(rand(1000, 2021));
+        $rand = array_rand($descriptions, 70);
+        \Doctrine\Common\Util\Debug::dump($rand);
+        $random = '';
+        foreach ($rand as $r) $random =$random . $descriptions[$r] . ' ';
+        $book->setDescription($random);
+        $count_authors = rand(0,4);
+        $em = $this->getDoctrine()->getManager();
+        for ($i = 0; $i < $count_authors; $i++){
+            $author = new Authors();
+            $author->setName($authors_name[array_rand($authors_name, 1)]);
+            $author->addBooks($book);
+            $book->addAuthor($author);
+            $em->persist($author);
+        }
+
+
+        $em->persist($book);
         $em->flush();
         return $this->redirectToRoute('books');
     }
