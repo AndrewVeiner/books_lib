@@ -17,3 +17,42 @@
 label {
     cursor: pointer;
 }
+
+table {
+    border-spacing: 1px 1px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: bold;
+}
+th {
+    padding: 10px 20px;
+    background: #56433D;
+    color: #F9C941;
+    border-right: 2px solid;
+    font-size: 0.9em;
+}
+th:first-child {
+    text-align: left;
+}
+th:last-child {
+    border-right: none;
+}
+td {
+    vertical-align: middle;
+    padding: 10px;
+    font-size: 14px;
+}
+td:first-child {
+    border-right: none;
+}
+td:nth-child(2){
+    text-align: left;
+}
+
+input {
+    width: 220px;
+    font-size: 13px;
+    padding: 6px 0 4px 10px;
+    border: 1px solid #cecece;
+    background: #F6F6f6;
+    border-radius: 8px;
+}
