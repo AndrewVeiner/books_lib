@@ -242,15 +242,21 @@ class BooksController extends AbstractController
         $book->setDescription($random);
         $count_authors = rand(0,4);
         $em = $this->getDoctrine()->getManager();
+        $AllAuthors = $this->getDoctrine()->getManager()->getRepository(Authors::class)->findAll();
+
         for ($i = 0; $i < $count_authors; $i++){
-            $author = new Authors();
-            $author->setName($authors_name[array_rand($authors_name, 1)]);
-            $author->addBooks($book);
-            $book->addAuthor($author);
-            $em->persist($author);
+            if (in_array((string)$authors_name[array_rand($authors_name, 1)], $AllAuthors)) {
+                $key = array_search((string)$authors_name[array_rand($authors_name, 1)], $AllAuthors);
+                $book->addAuthor($AllAuthors[$key]);
+                $AllAuthors[$key]->addBooks($book);
+            } else {
+                $author = new Authors();
+                $author->setName($authors_name[array_rand($authors_name, 1)]);
+                $book->addAuthor($author);
+                $author->addBooks($book);
+                $em->persist($author);
+            }
         }
-
-
         $em->persist($book);
         $em->flush();
         return $this->redirectToRoute('books');

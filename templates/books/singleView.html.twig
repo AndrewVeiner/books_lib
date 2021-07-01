@@ -4,32 +4,51 @@
 
 {% block body %}
     <div class="container">
-        <h2>Book - {{ books.title }}</h2>
         <div class="card bg-dark text-white">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('books') }}">На главную</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('update_book', {'books': books.id}) }}">Редактирование</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-danger" href="{{ path('delete_book', {'books': books.id}) }}">Удалить запись</a>
+                    </li>
+
+                </ul>
+            </div>
             <div class="card-body">
-                <div><a class="btn btn-sm btn-secondary" role="button" href="{{ path('books') }}">На главную</a></div>
+                <div style="font-family: tahoma; font-size: 30px; text-align: center;">{{ books.title }}</div>
+                <p style="text-align: center;"><img height="400px" src="{{ asset('uploads/') ~ books.cover}}"></p>
+
                 <br>
-                <img height="400px" src="{{ asset('uploads/') ~ books.cover}}">
-                <div>Название книги: {{ books.title }}</div>
+                <div style="font-family: Gill Sans, sans-serif;">{{ books.description }}</div>
                 <br>
-                <div>Описание: {{ books.description }}</div>
-                <br>
-                <div>Год издательства: {{ books.year }}</div>
-                <a class="btn btn-sm btn-info" role="button" href="{{ path('update_book', {'books': books.id}) }}">Редактировать запись</a>
-                <a class="btn btn-sm btn-danger" role="button" href="{{ path('delete_book', {'books': books.id}) }}">Удалить запись</a>
+                <div style="font-family: Gill Sans, sans-serif; font-size: 15px;">Год издательства: {{ books.year }}</div>
             </div>
         </div>
 
-        <h2>Авторы:</h2>
         {% for author in books.authors %}
+
             <div class="card bg-dark text-white">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('update_authors', {'books': books.id, 'authors': author.id}) }}">Изменить автора</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-danger" href="{{ path('delete_authors_in_singleView_books', {'books': books.id, 'authors': author.id}) }}">Удалить автора</a>
+                        </li>
+
+                    </ul>
+                </div>
                 <div class="card-body">
-                    <div>Автор: {{ author.name }}</div>
-                    <a class="btn btn-sm btn-info" role="button" href="{{ path('update_authors', {'books': books.id, 'authors': author.id}) }}">Изменить автора</a>
-                    <a class="btn btn-sm btn-danger" role="button" href="{{ path('delete_authors_in_singleView_books', {'books': books.id, 'authors': author.id}) }}">Удалить автора</a>
+                    <div style="font-family: Gill Sans, sans-serif; font-size: 15px;">{{ author.name }}</div>
                 </div>
             </div>
         {% endfor %}
-        {{ render(controller('App\\Controller\\AuthorsController::create', {'books': books.id})) }}
+{#        {{ render(controller('App\\Controller\\AuthorsController::create', {'books': books.id})) }}#}
     </div>
 {% endblock %}

@@ -6,39 +6,37 @@
 
 {% block body %}
     <div class="container">
-        <div>
-            <a class="btn btn-sm btn-warning" role="button" href="{{ path('books') }}">Список книг</a>
-            <a class="btn btn-sm btn-warning" role="button" href="{{ path('index_authors') }}">Список авторов</a>
+        <div style="background: #283A41;text-align: center;">
+            <br>
+            <a class="btn btn-sm btn-success" role="button" href="{{ path('create_only_authors') }}">Добавить нового автора</a>
             <br><br>
         </div>
-        <div><a class="btn btn-sm btn-success" role="button" href="{{ path('create_only_authors') }}">Добавить нового автора</a></div>
-        <br>
+
+
         {% for author in authors %}
             <div class="card bg-dark text-white">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('update_authors_in_list', {'authors': author.id}) }}">Редактировать</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-danger" href="{{ path('delete_authors_in_list_authors', {'authors': author.id}) }}">Удалить Автора</a>
+                        </li>
+
+                    </ul>
+                </div>
                 <div class="card-body">
                     <div class="td">
-                            <div>ФИО Автора:</div>
-                            <div style="margin-left: 50px;">{{ author.name }}</div>
+                            <div style="font-family: tahoma; font-size: 30px;">{{ author.name }}</div>
                     </div>
                     <div>Работы автора: </div>
                     {% for book in author.books %}
-
-                        <div style="margin-left: 50px;">{{ book.title }}</div>
+                        <a class="nav-link" href="{{ path('singleView_books', {'id': book.id}) }}">{{ book.title }}</a>
                     {% endfor %}
                 </div>
                 <div>
-{#                    <a class="btn btn-sm btn-info" role="button" href="{{ path('update_authors', {'books': books.id, 'authors': author.id}) }}">Изменить автора</a>#}
-{#                    <a class="btn btn-sm btn-danger" role="button" href="{{ path('delete_authors', {'books': books.id, 'authors': author.id}) }}">Удалить автора</a>#}
-                    <a class="btn btn-sm btn-info" role="button" href="{{ path('update_authors_in_list', {'authors': author.id}) }}">Редактировать</a>
-                    <a class="btn btn-sm btn-danger" role="button" href="{{ path('delete_authors_in_list_authors', {'authors': author.id}) }}">Удалить</a>
                 </div>
-
-{#                <div>Книги автора:</div>#}
-{#                {% for book in author.books %}#}
-{#                        <div class="td">#}
-{#                            <div for="book-{{ book.id }}">{{ book.title }}</div>#}
-{#                        </div>#}
-{#                {% endfor %}#}
             </div>
             <br>
         {% endfor %}

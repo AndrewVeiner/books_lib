@@ -9,12 +9,14 @@
 
 {% block body %}
     <div class="container">
-        <div>
+        <div style="background: #283A41;text-align: center;">
+            <br>
             <a class="btn btn-sm btn-success" role="button" href="{{ path('create_books') }}">Добавить новую книгу</a>
             <a class="btn btn-sm btn-success" role="button" href="{{ path('generate_book') }}">Сгенерировать новую книгу</a>
+            <a class="btn btn-sm btn-success" role="button" href="{{ path('create_books') }}">Показать книги с 3 и более авторами</a>
+            <br><br>
         </div>
 
-        <br>
         <form method="GET">
             <div style="background: #2B4957;text-align: center;">
                 <br>

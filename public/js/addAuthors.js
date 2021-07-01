@@ -18,7 +18,7 @@ function addAuthorsForm($collectionHolder, $newLinkLi) {
     var newForm = prototype.replace(/__name__/g, index);
     $collectionHolder.data('index', index + 1);
     var $newFormLi = $('<li></li>').append(newForm);
-    $newFormLi.append('<a href="#" class="remove-authors">x</a>');
+    $newFormLi.append('<a href="#" class="remove-authors">Убрать автора</a>');
     $newLinkLi.before($newFormLi);
     $('.remove-authors').click(function(e) {
         e.preventDefault();
