@@ -207,6 +207,15 @@ class BooksController extends AbstractController
         return $this->redirectToRoute('books');
     }
 
+    /**
+     * @Route("/get_more_then_2_authors", name="get_more_then_2_authors")
+     */
+    public function getMoreThen2Authors(BooksRepository $booksRepository): Response
+    {
+        return $this->render('books/index.html.twig', [
+            'books' => $booksRepository->Get2Authors()
+        ]);
+    }
 
 
 
