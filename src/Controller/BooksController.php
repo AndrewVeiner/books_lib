@@ -56,16 +56,8 @@ class BooksController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $file = $request->files->get('books')['cover'];
-            $uploads_directory = $this->getParameter('uploads_directory');
-            if ($file != null) {
-                $filename = md5(uniqid())  . '.' . $file->guessExtension();
-                $file->move(
-                    $uploads_directory,
-                    $filename
-                );
-                $book->setCover($filename);
-            } else {
+            $file = $request->files->get('books')['file'];
+            if ($file == null) {
                 $book->setCover('default.png');
             }
 
@@ -82,8 +74,6 @@ class BooksController extends AbstractController
                     $authors[$i]->addBooks($book);
                 }
             }
-
-//            $book = $form->getData();
             $em = $this->getDoctrine()->getManager();
 
             $em->persist($book);
@@ -116,7 +106,7 @@ class BooksController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 //            \Doctrine\Common\Util\Debug::dump($oldFileNamePath);
-            $file = $request->files->get('books')['cover'];
+            $file = $request->files->get('books')['file'];
             $em = $this->getDoctrine()->getManager();
             if ($file != null) {
                 $filename = md5(uniqid()) . '.' . $file->guessExtension();
@@ -163,22 +153,10 @@ class BooksController extends AbstractController
         $oldFileNamePath = $request->get('books')->getCover();
         $form = $this->createForm(BooksType::class, $books);
         $form->handleRequest($request);
-
-        //$coverFile = $form->get('cover')->getData();
-        $file = $form->get('cover')->getData();
+        $file = $form->get('file')->getData();
         $em = $this->getDoctrine()->getManager();
-//        \Doctrine\Common\Util\Debug::dump($file);
-
-        if ($file != null) {
-            $filename = md5(uniqid()) . '.' . $file->guessExtension();
-            $uploads_directory = $this->getParameter('uploads_directory');
-            $file->move(
-                $uploads_directory,
-                $filename
-            );
-            $books->setCover($filename);
-
-        } else {
+        \Doctrine\Common\Util\Debug::dump($file);
+        if ($file == null) {
             $books->setCover($oldFileNamePath);
         }
         $em->flush();

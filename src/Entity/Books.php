@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -26,11 +27,6 @@ class Books
      */
     private $title;
 
-//    /**
-//     * @ORM\Column(type="string", length=255)
-//     */
-//    private $author;
-
     /**
      * @ORM\Column(type="text")
      */
@@ -38,9 +34,8 @@ class Books
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Assert\File(mimeTypes={ "image/jpeg" , "image/png" , "image/tiff" , "image/svg+xml"})
      */
-    private $cover;
+    private $cover = 'default.png';
 
     /**
      * @ORM\Column(type="integer")
@@ -97,7 +92,7 @@ class Books
         return $this->cover;
     }
 
-    public function setCover($cover): self
+    public function setCover(string $cover): self
     {
         $this->cover = $cover;
 
@@ -150,4 +145,63 @@ class Books
 
     public function __toString()
     { return $this->title; }
+
+    /**
+     * Unmapped property to handle file uploads
+     * @ORM\Column(nullable=true)
+     */
+    private $file;
+
+    /**
+     * @param UploadedFile $file
+     */
+    public function setFile(UploadedFile $file = null)
+    {
+        $this->file = $file;
+        $this->upload();
+        return $this;
+    }
+
+    /**
+     * @return UploadedFile
+     */
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    /**
+     * Manages the copying of the file to the relevant place on the server
+     */
+    public function upload()
+    {
+        // the file property can be empty if the field is not required
+        if (null === $this->getFile()) {
+            return;
+        }
+        $filename = md5(uniqid())  . '.' . $this->getFile()->guessExtension();
+
+        // we use the original file name here but you should
+        // sanitize it at least to avoid any security issues
+
+        // move takes the target directory and target filename as params
+        $this->getFile()->move(
+            'uploads',
+            $filename
+        );
+        $this->setCover($filename);
+
+        // set the path property to the filename where you've saved the file
+
+        // clean up the file property as you won't need it anymore
+        $this->setFile(null);
+    }
+
+    /**
+     * Lifecycle callback to upload the file to the server.
+     */
+    public function lifecycleFileUpload(): void
+    {
+        $this->upload();
+    }
 }

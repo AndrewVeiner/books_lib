@@ -23,14 +23,14 @@ class BooksType extends AbstractType
         $builder
             ->add('title', TextType::class, ['label' => 'Название книги'])
             ->add('description', TextType::class, ['label' => 'Описание книги'])
-            ->add('cover', null, [
+            ->add('file', FileType::class, [
                 'label' => 'upload cover',
                 'data_class' => null,
+                'required' => false,
             ])
             ->add('year', NumberType::class, [
                 'label' => 'Год публикации книги',
             ]);
-
 
         $builder->add('authors', CollectionType::class, [
             'label' => "Авторы",
@@ -42,7 +42,6 @@ class BooksType extends AbstractType
         ]);
     }
 
-
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -51,8 +50,5 @@ class BooksType extends AbstractType
         ]);
 
         $resolver->setAllowedTypes('require_cover', 'bool');
-//        $resolver->setDefaults([
-//            'data_class' => Books::class,
-//        ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Admin;
 
 use App\Entity\Authors;
 
+use App\Entity\Books;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -23,8 +24,11 @@ final class BooksAdmin extends AbstractAdmin
         $formMapper->add('description', TextareaType::class);
         $formMapper->add('year', IntegerType::class);
         $formMapper->add('authors');
-//        $formMapper->add('cover', FileType::class, [ 'data_class' => null ]);
-        $formMapper->add('cover', FileType::class, ['required' => false, 'label' => 'Fichier', 'data_class' => null]); // Add picture near this field
+        $formMapper->add('file', FileType::class, [
+            'required' => false,
+            'label' => 'upload cover',
+            'data_class' => null,
+            ]); // Add picture near this field
 
     }
 
