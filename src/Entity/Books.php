@@ -2,13 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\BooksRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -175,25 +172,15 @@ class Books
      */
     public function upload()
     {
-        // the file property can be empty if the field is not required
         if (null === $this->getFile()) {
             return;
         }
         $filename = md5(uniqid())  . '.' . $this->getFile()->guessExtension();
-
-        // we use the original file name here but you should
-        // sanitize it at least to avoid any security issues
-
-        // move takes the target directory and target filename as params
         $this->getFile()->move(
             'uploads',
             $filename
         );
         $this->setCover($filename);
-
-        // set the path property to the filename where you've saved the file
-
-        // clean up the file property as you won't need it anymore
         $this->setFile(null);
     }
 

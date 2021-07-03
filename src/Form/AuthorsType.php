@@ -12,9 +12,7 @@ class AuthorsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name')
-//            ->add('books')
-        ;
+            ->add('name');
     }
 
     public function configureOptions(OptionsResolver $resolver)

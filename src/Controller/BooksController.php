@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Entity\Authors;
 use App\Entity\Books;
 use App\Form\BooksType;
+use App\Repository\AuthorsRepository;
 use App\Repository\BooksRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +17,7 @@ class BooksController extends AbstractController
     /**
      * @Route("/", name="books")
      */
-    public function index(BooksRepository $booksRepository, Request $request): Response
+    public function index(Request $request): Response
     {
 
         $repository = $this->getDoctrine()->getRepository(Books::class);
@@ -47,7 +47,7 @@ class BooksController extends AbstractController
     /**
      * @Route("/books/create", name="create_books")
      */
-    public function creat(Request $request)
+    public function creat(Request $request, AuthorsRepository $authorsRepository)
     {
 
         $book = new Books();
@@ -57,32 +57,32 @@ class BooksController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $file = $request->files->get('books')['file'];
+
             if ($file == null) {
                 $book->setCover('default.png');
             }
-
+            $em = $this->getDoctrine()->getManager();
             $authors = $form->get('authors')->getData();
-            $AllAuthors = $this->getDoctrine()->getManager()->getRepository(Authors::class)->findAll();
 
             for ($i = 0; $i < count($authors); $i++) {
-                if (in_array((string)$authors[$i], $AllAuthors)) {
-                    $key = array_search((string)$authors[$i], $AllAuthors);
-                    $book->addAuthor($AllAuthors[$key]);
-                    $AllAuthors[$key]->addBooks($book);
+                $existAuthors = $authorsRepository->findOneBy(['name' => (string)$authors[$i]]);
+                if ($existAuthors != null){
+                    $book->addAuthor($existAuthors);
+                    $existAuthors->addBooks($book);
+                    $em->persist($existAuthors);
                 } else {
                     $book->addAuthor($authors[$i]);
                     $authors[$i]->addBooks($book);
                 }
+
             }
-            $em = $this->getDoctrine()->getManager();
 
             $em->persist($book);
             $em->flush();
-            $AllAuthors = $this->getDoctrine()->getManager()->getRepository(Authors::class)->findAll();
-            for ($i = 0; $i < count($AllAuthors); $i++) {
-                if (count($AllAuthors[$i]->getBooks()) == 0)
+            for ($i = 0; $i < count($authors); $i++) {
+                if (count($authors[$i]->getBooks()) == 0)
                 {
-                    $this->getDoctrine()->getManager()->remove($AllAuthors[$i]);
+                    $this->getDoctrine()->getManager()->remove($authors[$i]);
                 }
             }
             $em->flush();
@@ -98,14 +98,13 @@ class BooksController extends AbstractController
     /**
      * @Route("/books/update/{books}", name="update_book", methods={"GET", "POST"})
      */
-    public function update(Request $request, Books $books)
+    public function update(Request $request, Books $books, AuthorsRepository $authorsRepository)
     {
         $oldFileNamePath = $request->get('books')->getCover();
         $form = $this->createForm(BooksType::class, $books);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-//            \Doctrine\Common\Util\Debug::dump($oldFileNamePath);
             $file = $request->files->get('books')['file'];
             $em = $this->getDoctrine()->getManager();
             if ($file != null) {
@@ -122,17 +121,16 @@ class BooksController extends AbstractController
             }
 
             $authors = $form->get('authors')->getData();
-            $AllAuthors = $this->getDoctrine()->getManager()->getRepository(Authors::class)->findAll();
-
             for ($i = 0; $i < count($authors); $i++) {
-                if (in_array((string)$authors[$i], $AllAuthors)) {
-                    $key = array_search((string)$authors[$i], $AllAuthors);
-                    $books->addAuthor($AllAuthors[$key]);
-                    $AllAuthors[$key]->addBooks($books);
+                $existAuthors = $authorsRepository->findOneBy(['name' => (string)$authors[$i]]);
+                if ($existAuthors != null){
+                    $books->addAuthor($existAuthors);
+                    $existAuthors->addBooks($books);
                 } else {
                     $books->addAuthor($authors[$i]);
                     $authors[$i]->addBooks($books);
                 }
+
             }
             $em->flush();
 
@@ -155,7 +153,6 @@ class BooksController extends AbstractController
         $form->handleRequest($request);
         $file = $form->get('file')->getData();
         $em = $this->getDoctrine()->getManager();
-        \Doctrine\Common\Util\Debug::dump($file);
         if ($file == null) {
             $books->setCover($oldFileNamePath);
         }
@@ -200,7 +197,7 @@ class BooksController extends AbstractController
     /**
      * @Route("/generate_book", name="generate_book")
      */
-    public function GenerateBook(): Response
+    public function GenerateBook(AuthorsRepository $authorsRepository): Response
     {
         $titles = array("451° по Фаренгейту", "Мастер и Маргарита", "Шантарам", "Три товарища", "Цветы для Элджернона", "Портрет Дориана Грея");
         $authors_name = array('Рей Брэдбери', 'Джордж Оруэлл', 'Михаил Булгаков', 'Грегори Дэвид Робертс', 'Эрих Мария Ремарк', 'Дэниел Киз');
@@ -219,26 +216,24 @@ class BooksController extends AbstractController
             'дружбы', 'крепкой', 'и');
         $book = new Books();
         $book->setCover('default.png');
-        \Doctrine\Common\Util\Debug::dump(array_rand($titles, 1));
         $book->setTitle($titles[array_rand($titles, 1)]);
         $book->setYear(rand(1000, 2021));
         $rand = array_rand($descriptions, 70);
-        \Doctrine\Common\Util\Debug::dump($rand);
         $random = '';
         foreach ($rand as $r) $random =$random . $descriptions[$r] . ' ';
         $book->setDescription($random);
         $count_authors = rand(0,4);
         $em = $this->getDoctrine()->getManager();
-        $AllAuthors = $this->getDoctrine()->getManager()->getRepository(Authors::class)->findAll();
 
         for ($i = 0; $i < $count_authors; $i++){
-            if (in_array((string)$authors_name[array_rand($authors_name, 1)], $AllAuthors)) {
-                $key = array_search((string)$authors_name[array_rand($authors_name, 1)], $AllAuthors);
-                $book->addAuthor($AllAuthors[$key]);
-                $AllAuthors[$key]->addBooks($book);
+            $author_name_rand = $authors_name[array_rand($authors_name, 1)];
+            $existAuthors = $authorsRepository->findOneBy(['name' => $author_name_rand]);
+            if ($existAuthors != null){
+                $book->addAuthor($existAuthors);
+                $existAuthors->addBooks($book);
             } else {
                 $author = new Authors();
-                $author->setName($authors_name[array_rand($authors_name, 1)]);
+                $author->setName($author_name_rand);
                 $book->addAuthor($author);
                 $author->addBooks($book);
                 $em->persist($author);

@@ -28,54 +28,6 @@ class AuthorsController extends AbstractController
         ]);
     }
 
-
-    /**
-     * @Route("/authors/create/{books}", name="create_authors")
-     */
-    public function create(Request $request, Books $books): Response
-    {
-        $authors = new Authors();
-        $form = $this->createForm(AuthorsType::class, $authors, [
-           'action' => $this->generateUrl('create_authors', [
-               'books' => $books->getID()
-           ]),
-           'method' => 'POST'
-        ]);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $author = $form->getData();
-            $AllAuthors = $this->getDoctrine()->getManager()->getRepository(Authors::class)->findAll();
-
-            if (in_array((string)$author, $AllAuthors)) {
-                $key = array_search((string)$author, $AllAuthors);
-                $books->addAuthor($AllAuthors[$key]);
-                $AllAuthors[$key]->addBooks($books);
-            } else {
-                $books->addAuthor($author);
-                $author->addBooks($books);
-            }
-
-
-//            $authors = $form->getData();
-//            $authors->addBooks($books);
-            $em = $this->getDoctrine()->getManager();
-
-//            $em->persist($authors);
-            $em->flush();
-
-            return $this->redirectToRoute('singleView_books', ['id' => $books->getId()]);
-        }
-
-        return $this->render('authors/form.html.twig', [
-            'form' => $form->createView(),
-            'books' => $books
-        ]);
-    }
-
-
     /**
      * @Route("/authors/create", name="create_only_authors")
      */
