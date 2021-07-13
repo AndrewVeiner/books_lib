@@ -105,18 +105,9 @@ class BooksController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $file = $request->files->get('books')['file'];
+            $file = $form->get('file')->getData();
             $em = $this->getDoctrine()->getManager();
-            if ($file != null) {
-                $filename = md5(uniqid()) . '.' . $file->guessExtension();
-                $uploads_directory = $this->getParameter('uploads_directory');
-                $file->move(
-                    $uploads_directory,
-                    $filename
-                );
-                $books->setCover($filename);
-
-            } else {
+            if ($file == null) {
                 $books->setCover($oldFileNamePath);
             }
 
