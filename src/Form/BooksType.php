@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Books;
 
+use phpDocumentor\Reflection\DocBlock\Tags\TagWithType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -28,14 +29,6 @@ class BooksType extends AbstractType
                 'label' => 'Год публикации книги',
             ]);
 
-        $builder->add('authors', CollectionType::class, [
-            'label' => "Авторы",
-            'entry_type' => AuthorsType::class,
-            'entry_options' => ['label' => false],
-            'allow_add' => true,
-            'by_reference' => false,
-            'allow_delete' => true,
-        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

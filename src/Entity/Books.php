@@ -116,6 +116,7 @@ class Books
      */
     public function addAuthor(Authors $authors)
     {
+        $authors->addBooks($this);
         $this->authors[] = $authors;
         return $this;
     }
@@ -127,7 +128,10 @@ class Books
      */
     public function removeAuthor(Authors $authors)
     {
-        $this->authors->removeElement($authors);
+        if ($this->authors->contains($authors)) {
+            $this->authors->removeElement($authors);
+            $authors->removeBooks($this);
+        }
     }
 
     /**

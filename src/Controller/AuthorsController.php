@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Authors;
 use App\Entity\Books;
 use App\Form\AuthorsType;
+use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -160,6 +162,24 @@ class AuthorsController extends AbstractController
 
 
         return $this->redirectToRoute('index_authors');
+    }
+
+
+    /**
+     * @Route("/authors-name", name="authors_name", methods={"GET", "POST"})
+     */
+    public function authors_name ()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $authors = $em->getRepository(Authors::class)->findAll();
+        $authors_name = array();
+        for ($i = 0; $i < count($authors); $i++) {
+            array_push($authors_name, $authors[$i]->getName());
+        }
+
+
+        return new JsonResponse($authors_name);
+
     }
 
 

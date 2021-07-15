@@ -62,17 +62,21 @@ class BooksController extends AbstractController
                 $book->setCover('default.png');
             }
             $em = $this->getDoctrine()->getManager();
-            $authors = $form->get('authors')->getData();
+
+            $authors_str = $request->get('_authors');
+            $authors = explode(',', $authors_str);
+
 
             for ($i = 0; $i < count($authors); $i++) {
                 $existAuthors = $authorsRepository->findOneBy(['name' => (string)$authors[$i]]);
                 if ($existAuthors != null){
                     $book->addAuthor($existAuthors);
-                    $existAuthors->addBooks($book);
                     $em->persist($existAuthors);
                 } else {
-                    $book->addAuthor($authors[$i]);
-                    $authors[$i]->addBooks($book);
+                    $newAuthor = new Authors();
+                    $newAuthor->setName($authors[$i]);
+                    $book->addAuthor($newAuthor);
+
                 }
 
             }
@@ -80,7 +84,7 @@ class BooksController extends AbstractController
             $em->persist($book);
             $em->flush();
             for ($i = 0; $i < count($authors); $i++) {
-                if (count($authors[$i]->getBooks()) == 0)
+                if (count($authorsRepository->findOneBy(['name' => (string)$authors[$i]])->getBooks()) == 0)
                 {
                     $this->getDoctrine()->getManager()->remove($authors[$i]);
                 }
@@ -91,7 +95,8 @@ class BooksController extends AbstractController
         }
 
         return $this->render('books/form.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'auth' => ""
         ]);
     }
 
@@ -101,9 +106,17 @@ class BooksController extends AbstractController
     public function update(Request $request, Books $books, AuthorsRepository $authorsRepository)
     {
         $oldFileNamePath = $request->get('books')->getCover();
+        $oldAuthors = $books->GetAuthors();
+        $oldAuthorsNameStr = "";
+        for ($i = 0; $i < count($oldAuthors); $i++) {
+            $oldAuthorsNameStr = $oldAuthorsNameStr .  $oldAuthors[$i]->getName() . ',';
+        }
+
         $form = $this->createForm(BooksType::class, $books);
         $form->handleRequest($request);
-
+        for ($i = 0; $i < count($oldAuthors); $i++) {
+            $books->removeAuthor($oldAuthors[$i]);
+        }
         if ($form->isSubmitted() && $form->isValid()) {
             $file = $form->get('file')->getData();
             $em = $this->getDoctrine()->getManager();
@@ -111,15 +124,16 @@ class BooksController extends AbstractController
                 $books->setCover($oldFileNamePath);
             }
 
-            $authors = $form->get('authors')->getData();
+            $authors_str = $request->get('_authors');
+            $authors = explode(',', $authors_str);
             for ($i = 0; $i < count($authors); $i++) {
                 $existAuthors = $authorsRepository->findOneBy(['name' => (string)$authors[$i]]);
                 if ($existAuthors != null){
                     $books->addAuthor($existAuthors);
-                    $existAuthors->addBooks($books);
                 } else {
-                    $books->addAuthor($authors[$i]);
-                    $authors[$i]->addBooks($books);
+                    $newAuthor = new Authors();
+                    $newAuthor->setName($authors[$i]);
+                    $books->addAuthor($newAuthor);
                 }
 
             }
@@ -130,7 +144,8 @@ class BooksController extends AbstractController
 
 
         return $this->render('books/form.html.twig', [
-           'form' => $form->createView()
+           'form' => $form->createView(),
+            'auth' => $oldAuthorsNameStr,
         ]);
     }
 
@@ -234,5 +249,4 @@ class BooksController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('books');
     }
-
 }
