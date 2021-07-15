@@ -41,7 +41,7 @@ class Books
 
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Authors", mappedBy="books", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="App\Entity\Authors", mappedBy="books")
      * @OrderBy({"id" = "DESC"})
      */
     private $authors;

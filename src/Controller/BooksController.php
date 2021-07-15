@@ -8,6 +8,7 @@ use App\Form\BooksType;
 use App\Repository\AuthorsRepository;
 use App\Repository\BooksRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -76,9 +77,7 @@ class BooksController extends AbstractController
                     $newAuthor = new Authors();
                     $newAuthor->setName($authors[$i]);
                     $book->addAuthor($newAuthor);
-
                 }
-
             }
 
             $em->persist($book);
@@ -90,7 +89,6 @@ class BooksController extends AbstractController
                 }
             }
             $em->flush();
-
             return $this->redirectToRoute('books');
         }
 
@@ -175,14 +173,6 @@ class BooksController extends AbstractController
     public function delete(Books $books)
     {
         $em = $this->getDoctrine()->getManager();
-        $authors = $books->GetAuthors();
-        for ($i = 0; $i < count($authors); $i++) {
-            $authors[$i]->removeBooks($books);
-            if (count($authors[$i]->getBooks()) == 0)
-            {
-                $em->remove($authors[$i]);
-            }
-        }
         $em->remove($books);
         $em->flush();
         return $this->redirectToRoute('books');
@@ -248,5 +238,22 @@ class BooksController extends AbstractController
         $em->persist($book);
         $em->flush();
         return $this->redirectToRoute('books');
+    }
+
+    /**
+     * @Route("/books-name", name="books_name", methods={"GET", "POST"})
+     */
+    public function books_name ()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $books = $em->getRepository(Books::class)->findAll();
+        $books_name = array();
+        for ($i = 0; $i < count($books); $i++) {
+            array_push($books_name, $books[$i]->getTitle());
+        }
+
+
+        return new JsonResponse($books_name);
+
     }
 }

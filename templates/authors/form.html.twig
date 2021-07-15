@@ -11,6 +11,8 @@
             type="text/css"
     />
     <link rel="stylesheet" href="/css/form.css">
+    <link rel="stylesheet" href="/css/bootstrap-tagsinput.css">
+    <link rel="stylesheet" href="/css/typeaheadjs.css">
 {% endblock %}
 
 {% block body %}
@@ -20,11 +22,60 @@
                 <div class="form-group">
                     <label for="textarea">Автор</label>
                 </div>
-                <label for="textarea">ФИО</label><br>
+                <label for="textarea">ФИО</label>
                 {{ form_widget(form.name) }}
-                <button class="btn btn-sm btn-secondary" type="submit">Принять</button>
+
+                <div>
+                    <label for="textarea">Книги автора:</label>
+                    <input type="text" id="books" name="_books"  value="{{ books }}" data-role="tagsinput" />
+                </div>
+                <br><button class="btn btn-sm btn-secondary" type="button" onclick="this.parentNode.submit();">Принять</button>
                 {{ form_end(form) }}
             </div>
         </div>
+
+{% endblock %}
+
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="/js/typeahead.bundle.js"></script>
+    <script src="/js/bootstrap-tagsinput.min.js"></script>
+    <script>
+        var books = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.whitespace,
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            identify: function(obj) { return obj; },
+            prefetch: {
+                url: "/books-name",
+                cache:false
+            }
+        });
+
+        books.initialize();
+
+        function booksWithDefault(q, sync) {
+            if (q === '') {
+                sync(books.all());
+            }
+
+            else {
+                books.search(q, sync);
+            }
+        }
+
+        $('input[name=_books]').tagsinput(
+        {
+             typeaheadjs: {
+                        name: 'books',
+                        limit: 15,
+                        source: booksWithDefault
+                    },
+                    freeInput: false,
+
+
+        });
+    </script>
 
 {% endblock %}

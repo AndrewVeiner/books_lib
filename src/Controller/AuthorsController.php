@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Authors;
 use App\Entity\Books;
 use App\Form\AuthorsType;
+use App\Repository\BooksRepository;
+use Doctrine\Common\Util\Debug;
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,7 +35,7 @@ class AuthorsController extends AbstractController
     /**
      * @Route("/authors/create", name="create_only_authors")
      */
-    public function create_only_authors(Request $request): Response
+    public function create_only_authors(Request $request, BooksRepository $booksRepository): Response
     {
         $authors = new Authors();
         $form = $this->createForm(AuthorsType::class, $authors, [
@@ -47,7 +49,16 @@ class AuthorsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $author = $form->getData();
+            $books_str = $request->get('_books');
+            $books = explode(',', $books_str);
 
+            for ($i = 0; $i < count($books); $i++) {
+                $existBooks = $booksRepository->findOneBy(['title' => (string)$books[$i]]);
+                if ($existBooks != null){
+                    $existBooks->addAuthor($authors);
+                }
+
+            }
             $em = $this->getDoctrine()->getManager();
             $em->persist($author);
             $em->flush();
@@ -55,16 +66,22 @@ class AuthorsController extends AbstractController
         }
 
         return $this->render('authors/form.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'books' => ""
         ]);
     }
 
     /**
      * @Route("/authors/update/{books}/{authors}", name="update_authors", methods={"GET", "POST"})
      */
-    public function update(Request $request, Books $books, Authors $authors)
+    public function update(Request $request, Books $books, Authors $authors, BooksRepository $booksRepository)
     {
 
+        $booksList = $authors->getBooks();
+        $oldBooksTitleStr = "";
+        for ($i = 0; $i < count($booksList); $i++) {
+            $oldBooksTitleStr = $oldBooksTitleStr .  $booksList[$i]->getTitle() . ',';
+        }
         $form = $this->createForm(AuthorsType::class, $authors, [
             'action' => $this->generateUrl('update_authors', [
                 'books' => $books->getID(),
@@ -75,6 +92,21 @@ class AuthorsController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $books_str = $request->get('_books');
+            $booksNew = explode(',', $books_str);
+            $countBooks = count($booksList);
+            for ($i = 0; $i < $countBooks ; $i++) {
+                $booksList[$i]->removeAuthor($authors);
+            }
+            for ($i = 0; $i < count($booksNew); $i++) {
+                $existBooks = $booksRepository->findOneBy(['title' => (string)$booksNew[$i]]);
+                if ($existBooks != null){
+                    $existBooks->addAuthor($authors);
+                }
+
+            }
+
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             return $this->redirectToRoute('books');
@@ -83,7 +115,7 @@ class AuthorsController extends AbstractController
 
         return $this->render('authors/form.html.twig', [
             'form' => $form->createView(),
-            'books' => $books
+            'books' => $oldBooksTitleStr
         ]);
     }
 
@@ -91,8 +123,15 @@ class AuthorsController extends AbstractController
     /**
      * @Route("/authors/update/{authors}", name="update_authors_in_list", methods={"GET", "POST"})
      */
-    public function update_in_list(Request $request, Authors $authors)
+    public function update_in_list(Request $request, Authors $authors, BooksRepository $booksRepository)
     {
+        $booksList = $authors->getBooks();
+        $oldBooksTitleStr = "";
+        for ($i = 0; $i < count($booksList); $i++) {
+            $oldBooksTitleStr = $oldBooksTitleStr .  $booksList[$i]->getTitle() . ',';
+        }
+
+
 
         $form = $this->createForm(AuthorsType::class, $authors, [
             'action' => $this->generateUrl('update_authors_in_list', [
@@ -103,6 +142,21 @@ class AuthorsController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $books_str = $request->get('_books');
+            $books = explode(',', $books_str);
+            $countBooks = count($booksList);
+            for ($i = 0; $i < $countBooks ; $i++) {
+                $booksList[$i]->removeAuthor($authors);
+            }
+            for ($i = 0; $i < count($books); $i++) {
+                $existBooks = $booksRepository->findOneBy(['title' => (string)$books[$i]]);
+                if ($existBooks != null){
+                    $existBooks->addAuthor($authors);
+                }
+
+            }
+
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             return $this->redirectToRoute('index_authors');
@@ -111,6 +165,7 @@ class AuthorsController extends AbstractController
 
         return $this->render('authors/form.html.twig', [
             'form' => $form->createView(),
+            'books' => $oldBooksTitleStr
         ]);
     }
 
