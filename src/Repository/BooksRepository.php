@@ -19,6 +19,36 @@ class BooksRepository extends ServiceEntityRepository
         parent::__construct($registry, Books::class);
     }
 
+
+    public function customFilter(array $criteria, array $orderBy = null, $limit = null, $offset = null) {
+        $em = $this->getEntityManager();
+        $qb = $em->createQueryBuilder()
+            ->select('b')
+            ->from('App\Entity\Books', 'b');
+
+        if (array_key_exists('authors', $criteria)) {
+            $qb = $qb->innerJoin('b.authors', 'a');
+        }
+
+        foreach ($criteria as $key => $value) {
+            if ($key == 'title'){
+                $qb = $qb->andWhere( $qb->expr()->like('b.title', ':value'))
+                    ->setParameter('value','%'.$value.'%');
+            } elseif ($key == 'description') {
+                $qb = $qb->andWhere( $qb->expr()->like('b.description', ':description'))
+                    ->setParameter('description','%'.$value.'%');
+            } elseif ($key == 'authors') {
+                $qb = $qb->andwhere('a.name = :nameParam')
+                    ->setParameter('nameParam', $value);
+            } elseif ($key == 'year') {
+                $qb = $qb->andWhere($qb->expr()->eq('b.'.$key, $value));
+            }
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+
     public function Get2Authors()
     {
         $em = $this->getEntityManager();

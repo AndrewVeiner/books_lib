@@ -23,6 +23,7 @@
                 <input name="title" type="text" class="filter" value="{{ filters.title | default("") }}" placeholder="Фильтр по названию">
                 <input name="description" type="text" class="filter" value="{{ filters.description | default("") }}" placeholder="Фильтр по описанию">
                 <input name="year" type="number" class="filter" value="{{ filters.year | default("") }}" placeholder="Фильтр по году издания">
+                <input name="authors" type="text" class="filter" value="{{ filters.authors | default("") }}" placeholder="Фильтр автору"><br><br>
                 <input class="btn btn-sm btn-primary" type="submit" value="Применить филтры" />
                 <a class="btn btn-sm btn-secondary" role="button" href="{{ path('books') }}">Сбросить фильтры</a>
                 <br><br>

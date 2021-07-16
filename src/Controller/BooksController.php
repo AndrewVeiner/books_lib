@@ -7,6 +7,7 @@ use App\Entity\Books;
 use App\Form\BooksType;
 use App\Repository\AuthorsRepository;
 use App\Repository\BooksRepository;
+use Doctrine\Common\Util\Debug;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,19 +19,15 @@ class BooksController extends AbstractController
     /**
      * @Route("/", name="books")
      */
-    public function index(Request $request): Response
+    public function index(Request $request, BooksRepository $booksRepository): Response
     {
-
-        $repository = $this->getDoctrine()->getRepository(Books::class);
 
         $filters = array_filter($request->query->all(), function($field) {
             return boolval($field);
         });
-
-        $em = $this->getDoctrine()->getManager();
         return $this->render('books/index.html.twig', [
             'controller_name' => 'BooksController',
-            'books' => $repository->findBy($filters),
+            'books' => $booksRepository->customFilter($filters),
             'filters' => $request->query->all(),
         ]);
     }
